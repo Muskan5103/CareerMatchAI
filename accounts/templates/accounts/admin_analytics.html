@@ -1,0 +1,84 @@
+
+{% extends "base.html" %}
+
+{% block title %}Platform Analytics | CareerMatch AI{% endblock %}
+
+{% block content %}
+<section class="dashboard-welcome">
+    <p class="eyebrow">ADMINISTRATOR WORKSPACE</p>
+    <h1>Platform Analytics</h1>
+    <p>Overview of CareerMatch AI platform activity.</p>
+
+    <div class="analytics-grid">
+        <article class="analytics-card">
+            <p>Total Candidates</p>
+            <h3>{{ total_candidates }}</h3>
+        </article>
+
+        <article class="analytics-card">
+            <p>Total Recruiters</p>
+            <h3>{{ total_recruiters }}</h3>
+        </article>
+
+        <article class="analytics-card">
+            <p>Total Jobs</p>
+            <h3>{{ total_jobs }}</h3>
+        </article>
+
+        <article class="analytics-card">
+            <p>Active Jobs</p>
+            <h3>{{ active_jobs }}</h3>
+        </article>
+
+        <article class="analytics-card">
+            <p>Applications</p>
+            <h3>{{ total_applications }}</h3>
+        </article>
+
+        <article class="analytics-card">
+            <p>Resumes</p>
+            <h3>{{ total_resumes }}</h3>
+        </article>
+
+        <article class="analytics-card">
+            <p>Notifications</p>
+            <h3>{{ total_notifications }}</h3>
+        </article>
+    </div>
+
+    <h2>Application Status Breakdown</h2>
+
+    <div class="analytics-grid">
+        <article class="analytics-card">
+            <p>Applied</p>
+            <h3>{{ status_counts.APPLIED }}</h3>
+        </article>
+
+        <article class="analytics-card">
+            <p>Under Review</p>
+            <h3>{{ status_counts.REVIEWING }}</h3>
+        </article>
+
+        <article class="analytics-card">
+            <p>Shortlisted</p>
+            <h3>{{ status_counts.SHORTLISTED }}</h3>
+        </article>
+
+        <article class="analytics-card">
+            <p>Interview</p>
+            <h3>{{ status_counts.INTERVIEW }}</h3>
+        </article>
+
+        <article class="analytics-card">
+            <p>Rejected</p>
+            <h3>{{ status_counts.REJECTED }}</h3>
+        </article>
+
+        <article class="analytics-card">
+            <p>Hired</p>
+            <h3>{{ status_counts.HIRED }}</h3>
+        </article>
+    </div>
+</section>
+{% endblock %}
+```

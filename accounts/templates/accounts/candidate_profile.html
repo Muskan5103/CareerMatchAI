@@ -1,0 +1,44 @@
+
+{% extends "base.html" %}
+
+{% block title %}My Candidate Profile | CareerMatch AI{% endblock %}
+
+{% block content %}
+<section class="profile-page">
+    <div class="profile-heading">
+        <p class="eyebrow">CANDIDATE ACCOUNT</p>
+        <h1>My Profile</h1>
+        <p>Update your details to improve your job recommendations.</p>
+    </div>
+
+    <div class="profile-card">
+        <form method="post">
+            {% csrf_token %}
+
+            {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                    </label>
+
+                    {{ field }}
+
+                    {% if field.help_text %}
+                        <small class="help-text">{{ field.help_text }}</small>
+                    {% endif %}
+
+                    {% for error in field.errors %}
+                        <p class="field-error">{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+
+            {% if form.non_field_errors %}
+                <div class="field-error">{{ form.non_field_errors }}</div>
+            {% endif %}
+
+            <button type="submit" class="btn">Save Profile</button>
+        </form>
+    </div>
+</section>
+{% endblock %}

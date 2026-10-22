@@ -1,0 +1,100 @@
+
+{% extends "base.html" %}
+
+{% block title %}Applicants | CareerMatch AI{% endblock %}
+
+{% block content %}
+<div class="container applicant-page">
+
+    <div class="page-heading">
+        <p class="eyebrow">RECRUITER WORKSPACE</p>
+        <h1>Applicants</h1>
+        <p>
+            {{ job.title }} at {{ job.company_name }}
+        </p>
+    </div>
+
+    <div class="stat-card">
+        <span>Total Applicants</span>
+        <h2>{{ total_applicants }}</h2>
+    </div>
+
+    <section class="applicant-list">
+        <h2>Applications</h2>
+
+        {% for application in applications %}
+            <article class="applicant-card">
+                <div class="applicant-header">
+                    <div>
+                        <h3>
+                            {{ application.candidate.get_full_name|default:application.candidate.username }}
+                        </h3>
+                        <p>{{ application.candidate.email }}</p>
+                    </div>
+
+
+<form method="post"
+      action="{% url 'update_application_status' application.pk %}"
+      class="status-update-form">
+    {% csrf_token %}
+
+    <label for="status-{{ application.pk }}">Application status</label>
+
+    <select name="status" id="status-{{ application.pk }}" required>
+        {% for value, label in status_choices %}
+            <option value="{{ value }}"
+                {% if application.status == value %}selected{% endif %}>
+                {{ label }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <button type="submit">Update Status</button>
+</form>
+
+                </div>
+
+                <div class="applicant-meta">
+                    <p>
+                        <strong>Applied:</strong>
+                        {{ application.applied_at|date:"d M Y, h:i A" }}
+                    </p>
+
+                    <p>
+                        <strong>AI match:</strong>
+                        {% if application.match_score != None %}
+                            {{ application.match_score|floatformat:1 }}%
+                        {% else %}
+                            Not available
+                        {% endif %}
+                    </p>
+                </div>
+
+                {% if application.resume %}
+                    <p>
+                        <strong>Resume:</strong>
+                        <a href="{% url 'download_resume' application.resume.pk %}">
+                            Download resume
+                        </a>
+                    </p>
+                {% else %}
+                    <p>No resume attached to this application.</p>
+                {% endif %}
+
+                {% if application.cover_letter %}
+                    <details>
+                        <summary>View cover letter</summary>
+                        <p>{{ application.cover_letter|linebreaksbr }}</p>
+                    </details>
+                {% endif %}
+            </article>
+        {% empty %}
+            <div class="empty-state">
+                <h3>No applicants yet</h3>
+                <p>Applications for this job will appear here.</p>
+            </div>
+        {% endfor %}
+
+    </section>
+</div>
+{% endblock %}

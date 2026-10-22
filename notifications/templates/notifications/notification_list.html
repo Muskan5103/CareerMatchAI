@@ -1,0 +1,48 @@
+
+{% extends "base.html" %}
+
+{% block title %}My Notifications | CareerMatch AI{% endblock %}
+
+{% block content %}
+<section class="page-heading notification-heading">
+    <p class="eyebrow">CANDIDATE WORKSPACE</p>
+    <h1>My Notifications</h1>
+    <p>You have {{ unread_count }} unread notification(s).</p>
+</section>
+
+<div class="notification-list">
+    {% for notification in notifications %}
+        <article class="notification-card {% if not notification.is_read %}unread{% endif %}">
+            <p>{{ notification.message }}</p>
+
+            <p class="muted-text">
+                {{ notification.created_at|date:"d M Y, h:i A" }}
+            </p>
+{% if not notification.is_read %}
+    <form method="post"
+          action="{% url 'mark_notification_read' notification.pk %}">
+        {% csrf_token %}
+        <button type="submit" class="btn">
+            Mark as Read
+        </button>
+    </form>
+{% else %}
+    <p class="muted-text">Read</p>
+{% endif %}
+            {% if notification.application %}
+                <a
+                    class="btn"
+                    href="{% url 'job_detail' notification.application.job.pk %}"
+                >
+                    View Job
+                </a>
+            {% endif %}
+        </article>
+    {% empty %}
+        <div class="empty-state">
+            <h3>No notifications yet</h3>
+            <p>Updates from recruiters will appear here.</p>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

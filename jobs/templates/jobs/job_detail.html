@@ -1,0 +1,90 @@
+
+{% extends "base.html" %}
+{% block title %}{{ job.title }} | CareerMatch AI{% endblock %}
+
+{% block content %}
+<article class="detail-card">
+    <a class="back-link" href="{% url 'job_list' %}">Back to jobs</a>
+
+    <p class="eyebrow">{{ job.get_job_type_display }}</p>
+    <h1>{{ job.title }}</h1>
+    <h2>{{ job.company_name }}</h2>
+
+    <div class="detail-meta">
+        <span>{{ job.location }}</span>
+        <span>{{ job.get_experience_level_display }}</span>
+        {% if job.min_salary or job.max_salary %}
+            <span>
+                {% if job.min_salary %}₹{{ job.min_salary }}{% else %}Not specified{% endif %}
+                –
+                {% if job.max_salary %}₹{{ job.max_salary }}{% else %}Not specified{% endif %}
+            </span>
+        {% endif %}
+    </div>
+
+    <h3>Job description</h3>
+    <p class="long-text">{{ job.description }}</p>
+
+    <h3>Required skills</h3>
+    <div class="skill-list">
+        {% for skill in job.required_skills %}
+            <span class="skill-tag">{{ skill }}</span>
+        {% empty %}
+            <span>Skills not specified.</span>
+        {% endfor %}
+    </div>
+
+    {% if user.is_authenticated %}
+        {% if user.role == "CANDIDATE" %}
+            {% if already_applied %}
+                <p class="status-text">You have already applied for this job.</p>
+                <a class="btn" href="{% url 'my_applications' %}">
+                    Track Application
+                </a>
+            {% else %}
+
+<form method="post"
+      action="{% url 'apply_for_job' job.pk %}"
+      class="apply-form">
+    {% csrf_token %}
+
+    <label for="resume_id">Choose a resume</label>
+    <select class="form-input" id="resume_id" name="resume_id">
+        <option value="">Use my primary resume, if available</option>
+        {% for resume in resumes %}
+            <option value="{{ resume.pk }}"
+                {% if resume.is_primary %}selected{% endif %}>
+                {{ resume.title }}
+            </option>
+        {% endfor %}
+    </select>
+
+    {% if not resumes %}
+        <p class="help-text">
+            You can apply without a resume, but a match score will not be calculated.
+            <a href="{% url 'resume_upload' %}">Upload a resume</a>.
+        </p>
+    {% endif %}
+
+    <label for="cover_letter">Cover letter (optional)</label>
+    <textarea class="form-input"
+              id="cover_letter"
+              name="cover_letter"
+              rows="5"
+              maxlength="5000"
+              placeholder="Introduce yourself and explain your interest."></textarea>
+
+    <button class="btn" type="submit">Apply Now</button>
+</form>
+
+            {% endif %}
+        {% else %}
+            <p class="muted-text">
+                Candidate accounts are required to apply for jobs.
+            </p>
+        {% endif %}
+    {% else %}
+        <a class="btn" href="{% url 'login' %}">Log in to apply</a>
+    {% endif %}
+</article>
+{% endblock %}

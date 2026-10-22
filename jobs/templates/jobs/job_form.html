@@ -1,0 +1,43 @@
+
+{% extends "base.html" %}
+{% block title %}{{ page_title }} | CareerMatch AI{% endblock %}
+
+{% block content %}
+<section class="profile-page">
+    <div class="profile-heading">
+        <p class="eyebrow">RECRUITER WORKSPACE</p>
+        <h1>{{ page_title }}</h1>
+        <p>Provide accurate details to help candidates find your vacancy.</p>
+    </div>
+
+    <div class="profile-card">
+        <form method="post">
+            {% csrf_token %}
+
+            {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+
+                    {% if field.help_text %}
+                        <small class="help-text">{{ field.help_text }}</small>
+                    {% endif %}
+
+                    {% for error in field.errors %}
+                        <p class="field-error">{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+
+            {% if form.non_field_errors %}
+                <div class="field-error">{{ form.non_field_errors }}</div>
+            {% endif %}
+
+            <button class="btn" type="submit">Save Job</button>
+            <a class="reset-link" href="{% url 'recruiter_job_list' %}">
+                Cancel
+            </a>
+        </form>
+    </div>
+</section>
+{% endblock %}

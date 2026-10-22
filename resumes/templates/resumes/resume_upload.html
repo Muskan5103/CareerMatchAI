@@ -1,0 +1,44 @@
+
+{% extends "base.html" %}
+{% block title %}Upload Resume | CareerMatch AI{% endblock %}
+
+{% block content %}
+<section class="profile-page">
+    <div class="profile-heading">
+        <p class="eyebrow">AI CAREER MATCHING</p>
+        <h1>Upload your resume</h1>
+        <p>We'll extract your skills and compare your resume with active jobs.</p>
+    </div>
+
+    <div class="profile-card">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+
+                    {% if field.help_text %}
+                        <small class="help-text">{{ field.help_text }}</small>
+                    {% endif %}
+
+                    {% for error in field.errors %}
+                        <p class="field-error">{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+
+            {% if form.non_field_errors %}
+                <div class="field-error">{{ form.non_field_errors }}</div>
+            {% endif %}
+
+            <p class="help-text">
+                Accepted formats: PDF and DOCX. Maximum size: 5 MB.
+            </p>
+
+            <button type="submit" class="btn">Upload and Analyze</button>
+        </form>
+    </div>
+</section>
+{% endblock %}

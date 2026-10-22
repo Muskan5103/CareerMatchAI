@@ -1,0 +1,52 @@
+
+{% extends "base.html" %}
+
+{% block title %}{{ account_type }} Registration | CareerMatch AI{% endblock %}
+
+{% block content %}
+<section class="auth-container">
+    <div class="auth-card">
+        <h1>Create your {{ account_type }} account</h1>
+        <p class="auth-subtitle">
+            Join CareerMatch AI and take your next career step.
+        </p>
+
+        <form method="post">
+            {% csrf_token %}
+
+            {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                    </label>
+
+                    {{ field }}
+
+                    {% if field.help_text %}
+                        <div class="help-text">{{ field.help_text|safe }}</div>
+                    {% endif %}
+
+                    {% for error in field.errors %}
+                        <p class="field-error">{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+
+            {% if form.non_field_errors %}
+                <div class="field-error">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <button class="btn form-button" type="submit">
+                Create Account
+            </button>
+        </form>
+
+        <p class="auth-switch">
+            Already registered?
+            <a href="{% url 'login' %}">Log in</a>
+        </p>
+    </div>
+</section>
+{% endblock %}

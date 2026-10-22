@@ -1,0 +1,59 @@
+
+{% extends "base.html" %}
+
+{% block title %}CareerMatch AI | Find Your Career{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <h1>Find Your <span>Perfect Career</span> with AI</h1>
+
+    <p>
+        Discover jobs that match your skills, analyze your resume,
+        identify missing skills, and take the next step in your career.
+    </p>
+
+    <div>
+        <a href="{% url 'candidate_register' %}" class="btn">
+    Get Started
+</a>
+    </div>
+    <a class="btn" href="{% url 'job_list' %}">Find Jobs</a>
+</section>
+
+<section class="features">
+    <article class="feature-card">
+        <h3>AI Job Matching</h3>
+        <p>Discover opportunities based on your skills and resume.</p>
+    </article>
+
+    <article class="feature-card">
+        <h3>Resume Analysis</h3>
+        <p>Extract your skills and understand your career strengths.</p>
+    </article>
+
+    <article class="feature-card">
+        <h3>Skill-Gap Analysis</h3>
+        <p>Identify skills to develop for your desired roles.</p>
+    </article>
+    <section class="section-title">
+    <h2>Latest Opportunities</h2>
+    <a href="{% url 'job_list' %}">View all jobs →</a>
+</section>
+
+<div class="job-grid">
+    {% for job in jobs %}
+        <article class="job-card">
+            <p class="job-type">{{ job.get_job_type_display }}</p>
+            <h3>{{ job.title }}</h3>
+            <p class="company-name">{{ job.company_name }}</p>
+            <p class="job-location">{{ job.location }}</p>
+            <a class="btn" href="{% url 'job_detail' job.pk %}">
+                View Details
+            </a>
+        </article>
+    {% empty %}
+        <p>No jobs are available yet. Check back soon.</p>
+    {% endfor %}
+</div>
+</section>
+{% endblock %}

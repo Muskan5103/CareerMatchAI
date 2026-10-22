@@ -1,0 +1,96 @@
+
+{% extends "base.html" %}
+{% block title %}Find Jobs | CareerMatch AI{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+    <p class="eyebrow">CAREER OPPORTUNITIES</p>
+    <h1>Find your next job</h1>
+    <p>Search opportunities that match your skills and goals.</p>
+</section>
+
+<form method="get" class="filter-card">
+    <div class="filter-grid">
+        <div class="form-group">
+            <label for="q">Keyword</label>
+            <input class="form-input" id="q" name="q"
+                   value="{{ query }}" placeholder="Job title or company">
+        </div>
+
+        <div class="form-group">
+            <label for="location">Location</label>
+            <input class="form-input" id="location" name="location"
+                   value="{{ location }}" placeholder="City or Remote">
+        </div>
+
+        <div class="form-group">
+            <label for="job_type">Job type</label>
+            <select class="form-input" id="job_type" name="job_type">
+                <option value="">All job types</option>
+                {% for value, label in job_types %}
+                    <option value="{{ value }}"
+                        {% if selected_job_type == value %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="experience_level">Experience</label>
+            <select class="form-input" id="experience_level"
+                    name="experience_level">
+                <option value="">All levels</option>
+                {% for value, label in experience_levels %}
+                    <option value="{{ value }}"
+                        {% if selected_experience == value %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    <button class="btn" type="submit">Search Jobs</button>
+    <a class="reset-link" href="{% url 'job_list' %}">Clear filters</a>
+</form>
+
+<div class="section-title">
+    <h2>Available opportunities</h2>
+    <span>{{ jobs|length }} result(s)</span>
+</div>
+
+<div class="job-grid">
+    {% for job in jobs %}
+        <article class="job-card">
+            <p class="job-type">{{ job.get_job_type_display }}</p>
+            <h3>{{ job.title }}</h3>
+            <p class="company-name">{{ job.company_name }}</p>
+            <p class="job-location">{{ job.location }}</p>
+
+            <p class="job-description">
+                {{ job.description|truncatewords:25 }}
+            </p>
+
+            <div class="skill-list">
+                {% for skill in job.required_skills %}
+                    <span class="skill-tag">{{ skill }}</span>
+                {% endfor %}
+            </div>
+
+            <a class="btn" href="{% url 'job_detail' job.pk %}">
+                View Details
+            </a>
+
+            {% if user.is_authenticated and user.role == "CANDIDATE" and job.has_applied %}
+                <span class="status-text">Already applied</span>
+            {% endif %}
+        </article>
+    {% empty %}
+        <div class="empty-state">
+            <h3>No matching jobs found</h3>
+            <p>Try changing your search or removing some filters.</p>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

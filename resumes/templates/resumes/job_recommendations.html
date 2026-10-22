@@ -1,0 +1,81 @@
+
+{% extends "base.html" %}
+{% block title %}AI Job Matches | CareerMatch AI{% endblock %}
+
+{% block content %}
+<div class="ai-matches-page">
+<section class="page-heading">
+    <p class="eyebrow">AI-POWERED RECOMMENDATIONS</p>
+    <h1>Your job matches</h1>
+    <p>Recommendations based on {{ resume.title }}.</p>
+</section>
+
+<form method="get" class="filter-card">
+    <label for="resume">Choose a resume</label>
+    <select class="form-input" name="resume" id="resume">
+        {% for item in resumes %}
+            <option value="{{ item.pk }}"
+                {% if item.pk == resume.pk %}selected{% endif %}>
+                {{ item.title }}
+            </option>
+        {% endfor %}
+    </select>
+    <button class="btn" type="submit">Recalculate Matches</button>
+</form>
+
+<div class="job-grid">
+    {% for item in recommendations %}
+        <article class="job-card">
+            <p class="job-type">{{ item.job.get_job_type_display }}</p>
+            <h3>{{ item.job.title }}</h3>
+            <p class="company-name">{{ item.job.company_name }}</p>
+            <p class="job-location">{{ item.job.location }}</p>
+
+            <div class="match-score">
+                <span>Resume match</span>
+                <strong>{{ item.score }}%</strong>
+            </div>
+
+            <div class="score-track">
+                <div class="score-fill"
+                     style="width: {{ item.score }}%;"></div>
+            </div>
+
+            <p class="muted-text">
+                Text similarity: {{ item.text_similarity }}%
+            </p>
+            <p class="muted-text">
+                Required skill coverage: {{ item.skill_coverage }}%
+            </p>
+
+            <h4>Matched skills</h4>
+            <div class="skill-list">
+                {% for skill in item.matched_skills %}
+                    <span class="skill-tag">{{ skill }}</span>
+                {% empty %}
+                    <span>No required skills matched yet.</span>
+                {% endfor %}
+            </div>
+
+            <h4>Skills to develop</h4>
+            <div class="skill-list">
+                {% for skill in item.missing_skills %}
+                    <span class="missing-skill">{{ skill }}</span>
+                {% empty %}
+                    <span>All listed required skills were detected.</span>
+                {% endfor %}
+            </div>
+
+            <a class="btn" href="{% url 'job_detail' item.job.pk %}">
+                View Job and Apply
+            </a>
+        </article>
+    {% empty %}
+        <div class="empty-state">
+            <h3>No active jobs found</h3>
+            <p>Check back when recruiters publish new vacancies.</p>
+        </div>
+    {% endfor %}
+</div>
+</div>
+{% endblock %}

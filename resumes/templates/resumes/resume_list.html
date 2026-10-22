@@ -1,0 +1,60 @@
+
+{% extends "base.html" %}
+{% block title %}My Resumes | CareerMatch AI{% endblock %}
+
+{% block content %}
+<div class="resume-page">
+<section class="page-heading">
+    <p class="eyebrow">CANDIDATE WORKSPACE</p>
+    <h1>My Resumes</h1>
+    <p>Manage your resumes and choose which one to use for matching.</p>
+</section>
+
+<div class="section-title">
+    <h2>Uploaded resumes</h2>
+    <a class="btn" href="{% url 'resume_upload' %}">Upload Resume</a>
+</div>
+
+<div class="job-grid">
+    {% for resume in resumes %}
+        <article class="job-card">
+            <h3>{{ resume.title }}</h3>
+            <p class="muted-text">
+                Uploaded {{ resume.uploaded_at|date:"d M Y" }}
+            </p>
+
+            {% if resume.is_primary %}
+                <p class="status-text">Primary resume</p>
+            {% else %}
+                <form method="post"
+                      action="{% url 'set_primary_resume' resume.pk %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn">
+                        Set as Primary
+                    </button>
+                </form>
+            {% endif %}
+
+            <p><strong>Extracted skills</strong></p>
+            <div class="skill-list">
+                {% for skill in resume.extracted_skills %}
+                    <span class="skill-tag">{{ skill }}</span>
+                {% empty %}
+                    <span>No skills detected.</span>
+                {% endfor %}
+            </div>
+
+            <a class="btn" href="{% url 'job_recommendations' %}?resume={{ resume.pk }}">
+                Find Matching Jobs
+            </a>
+        </article>
+    {% empty %}
+        <div class="empty-state">
+            <h3>No resumes uploaded</h3>
+            <p>Upload a PDF or DOCX to begin AI job matching.</p>
+            <a class="btn" href="{% url 'resume_upload' %}">Upload Resume</a>
+        </div>
+    {% endfor %}
+</div>
+</div>
+{% endblock %}

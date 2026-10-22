@@ -1,0 +1,142 @@
+
+{% extends "base.html" %}
+
+{% block title %}{{ dashboard_title }} | CareerMatch AI{% endblock %}
+
+{% block content %}
+<section class="dashboard-welcome">
+    <p class="eyebrow">CAREERMATCH AI</p>
+
+    <h1>{{ dashboard_title }}</h1>
+
+    <p>{{ dashboard_message }}</p>
+
+    <div class="dashboard-card">
+        <h2>Hello, {{ request.user.username }}!</h2>
+        <p>
+            Your account is ready. We'll add profile management,
+            job listings and AI-powered matching in the next stages.
+        </p>
+    </div>
+
+
+{% if request.user.role == "CANDIDATE" %}
+    <div class="dashboard-card">
+        <h2>Your Career Search</h2>
+        <p>Find vacancies and track your submitted applications.</p>
+        <a class="btn" href="{% url 'job_list' %}">Find Jobs</a>
+        <a class="btn" href="{% url 'my_applications' %}">
+            My Applications
+        </a>
+    </div>
+{% endif %}
+
+{% if request.user.role == "RECRUITER" %}
+    <div class="dashboard-card">
+        <h2>Recruitment Workspace</h2>
+        <p>Monitor your vacancies and review candidate applications.</p>
+        <a class="btn" href="{% url 'job_create' %}">Post a Job</a>
+        <a class="btn" href="{% url 'recruiter_job_list' %}">
+            Manage Jobs
+        </a>
+    </div>
+
+    <section class="recruiter-analytics">
+        <h2>Recruitment Overview</h2>
+
+        <div class="analytics-grid">
+            <article class="analytics-card">
+                <p>Total Jobs</p>
+                <h3>{{ total_jobs }}</h3>
+            </article>
+
+            <article class="analytics-card">
+                <p>Active Jobs</p>
+                <h3>{{ active_jobs }}</h3>
+            </article>
+
+            <article class="analytics-card">
+                <p>Total Applications</p>
+                <h3>{{ total_applications }}</h3>
+            </article>
+        </div>
+
+        <h2>Application Status</h2>
+
+        <div class="analytics-grid">
+            <article class="analytics-card">
+                <p>Applied</p>
+                <h3>{{ status_counts.applied }}</h3>
+            </article>
+
+            <article class="analytics-card">
+                <p>Under Review</p>
+                <h3>{{ status_counts.reviewing }}</h3>
+            </article>
+
+            <article class="analytics-card">
+                <p>Shortlisted</p>
+                <h3>{{ status_counts.shortlisted }}</h3>
+            </article>
+
+            <article class="analytics-card">
+                <p>Interview</p>
+                <h3>{{ status_counts.interview }}</h3>
+            </article>
+
+            <article class="analytics-card">
+                <p>Rejected</p>
+                <h3>{{ status_counts.rejected }}</h3>
+            </article>
+
+            <article class="analytics-card">
+                <p>Hired</p>
+                <h3>{{ status_counts.hired }}</h3>
+            </article>
+        </div>
+
+        <h2>Recent Applications</h2>
+
+        {% for application in recent_applications %}
+            <article class="recent-application-card">
+                <div>
+                    <h3>
+                        {{ application.candidate.get_full_name|default:application.candidate.username }}
+                    </h3>
+                    <p>{{ application.job.title }} · {{ application.job.company_name }}</p>
+                    <p>
+                        Applied {{ application.applied_at|date:"d M Y" }}
+                    </p>
+                </div>
+
+                <div>
+                    <span class="application-status">
+                        {{ application.get_status_display }}
+                    </span>
+
+                    <p>
+                        Match:
+                        {% if application.match_score != None %}
+                            {{ application.match_score|floatformat:1 }}%
+                        {% else %}
+                            Not available
+                        {% endif %}
+                    </p>
+
+                    <a class="btn"
+                       href="{% url 'job_applicants' application.job.pk %}">
+                        View Applicants
+                    </a>
+                </div>
+            </article>
+        {% empty %}
+            <div class="empty-state">
+                <h3>No applications yet</h3>
+                <p>Applications for your jobs will appear here.</p>
+            </div>
+        {% endfor %}
+    </section>
+{% endif %}
+
+</section>
+{% endblock %}

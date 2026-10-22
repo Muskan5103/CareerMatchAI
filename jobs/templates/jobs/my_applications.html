@@ -1,0 +1,47 @@
+
+{% extends "base.html" %}
+{% block title %}My Applications | CareerMatch AI{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+    <p class="eyebrow">CANDIDATE WORKSPACE</p>
+    <h1>My Applications</h1>
+    <p>Track the progress of your job applications.</p>
+</section>
+
+<div class="job-grid">
+    {% for application in applications %}
+        <article class="job-card">
+            <p class="job-type">{{ application.job.get_job_type_display }}</p>
+            <h3>{{ application.job.title }}</h3>
+            <p class="company-name">{{ application.job.company_name }}</p>
+            <p class="job-location">{{ application.job.location }}</p>
+            <p>
+    <span class="muted-text">Application status</span>
+    <strong class="application-status">
+        {{ application.get_status_display }}
+    </strong>
+</p>
+            {% if application.match_score != None %}
+    <p class="muted-text">
+        Resume match: {{ application.match_score|floatformat:1 }}%
+    </p>
+{% else %}
+    <p class="muted-text">No resume match score available.</p>
+{% endif %}
+            <p class="muted-text">
+                Applied {{ application.applied_at|date:"d M Y" }}
+            </p>
+            <a class="btn" href="{% url 'job_detail' application.job.pk %}">
+                View Job
+            </a>
+        </article>
+    {% empty %}
+        <div class="empty-state">
+            <h3>No applications yet</h3>
+            <p>Explore the latest vacancies and apply to a job.</p>
+            <a class="btn" href="{% url 'job_list' %}">Find Jobs</a>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,53 @@
+
+{% extends "base.html" %}
+
+{% block title %}Login | CareerMatch AI{% endblock %}
+
+{% block content %}
+<section class="auth-container">
+    <div class="auth-card">
+        <h1>Welcome back</h1>
+        <p class="auth-subtitle">
+            Log in to your CareerMatch AI account.
+        </p>
+
+        <form method="post">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="field-error">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                    </label>
+
+                    {{ field }}
+
+                    {% for error in field.errors %}
+                        <p class="field-error">{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+
+            <button class="btn form-button" type="submit">
+                Log In
+            </button>
+        </form>
+
+        <p class="auth-switch">
+            New to CareerMatch AI?
+            <a href="{% url 'candidate_register' %}">Create a candidate account</a>
+        </p>
+
+        <p class="auth-switch">
+            Hiring for your company?
+            <a href="{% url 'recruiter_register' %}">Register as a recruiter</a>
+        </p>
+    </div>
+</section>
+{% endblock %}
